@@ -1,116 +1,80 @@
-# kata-hand-programming-language
+Vending Machine Kata
+====================
 
-## Objective
+Source: [https://github.com/ardalis/kata-catalog](https://github.com/ardalis/kata-catalog)
 
-The goal of this kata is to apply and refine TDD (Test-Driven Development) and Extreme Programming techniques by developing an interpreter for a language based on emojis.
+## Instructions
 
-Link to the original [description](https://github.com/F0rno/kata-Hand-Programming-Language/#hand-programming-language-kata).
+In this exercise you will build the brains of a vending machine.  It will accept money, make change, maintain
+inventory, and dispense products.  All the things that you might expect a vending machine to accomplish.
 
-### Functioning
+The point of this kata is to provide a larger than trivial exercise that can be used to practice [TDD](https://deviq.com/practices/test-driven-development).  A significant
+portion of the effort will be in determining what tests should be written and, more importantly, written *next*. Implement the features in the order shown below:
 
-This language modifies an indefinite-sized memory, composed of cells initialized to 0.
+## Features
 
-* 👉 moves the memory pointer to the next cell.
-* 👈 moves the memory pointer to the previous cell.
-* 👆 increases the value of the current memory cell.
-* 👇 decreases the value of the current memory cell.
-* 👊 displays the value of the current cell according to its ASCII equivalence.
-* 🤜 if the memory cell at the current position has a value of 0, jump right after the corresponding 🤛.
-* 🤛 if the memory cell at the current position has a non-zero value, jump right after the corresponding 🤜.
+### Accept Coins
+  
+> As a vendor
+> I want a vending machine that accepts coins
+> So that I can collect money from the customer 
 
-#### [⚠️](https://emojiterra.com/es/senal-de-advertencia/) *Clarifications* [⚠️](https://emojiterra.com/es/senal-de-advertencia/)
+The vending machine will accept valid coins (nickels, dimes, and quarters) and reject invalid ones (pennies).  When a
+valid coin is inserted the amount of the coin will be added to the current amount and the display will be updated.
+When there are no coins inserted, the machine displays INSERT COIN.  Rejected coins are placed in the coin return.
 
-- Memory cells are bytes, with a value from 0 to 255.
-  - Decreasing 0 will result in 255.
-  - Increasing 255 will result in 0.
-- Memory starts at position 0.
-- Memory can be increased “infinitely”, but if you decrease the memory address 0, you must return the highest known memory address.
+**NOTE:** The temptation here will be to create Coin objects that know their value.  However, this is not how a real
+  vending machine works.  Instead, it identifies coins by their weight and size and then assigns a value to what
+  was inserted.  You will need to do something similar.  This can be simulated using strings, constants, enums,
+  symbols, or something of that nature.
 
-## Challenges
+### Select Product
 
-#### **1. Increase the memory pointer `👉`**
+> As a vendor
+> I want customers to select products
+> So that I can give them an incentive to put money in the machine
 
-* Move from memory position 0 to 1.
-* Move from memory position 1 to 2.
-* Move from memory position 255 to 256.
-* Move from memory position 256 to 257.
+There are three products:
 
-#### **2. Decrease the memory pointer `👈`**
+- cola for $1.00
+- chips for $0.50
+- candy for $0.65
 
-* Move from memory position 3 to 2.
-* Move from memory position 2 to 1.
-* Move from memory position 1 to 0.
+When the respective button is pressed and enough money has been inserted, the product is dispensed and the machine displays THANK YOU. If the display is checked again, it will display INSERT COIN and the current amount will be set to $0.00. If there is not enough money inserted then the machine displays PRICE and the price of the item and subsequent checks of the display will display either INSERT COIN or the current amount as appropriate.
 
-`From here, you should consider implementing the data structure that will act as memory.`
+### Make Change
 
-* Move from memory position 0 to the highest known position.
+> As a vendor
+> I want customers to receive correct change
+> So that they will use the vending machine again
 
-#### **3. Read memory positions**
+When a product is selected that costs less than the amount of money in the machine, then the remaining amount is placed in the coin return.
 
-* Set the following memory addresses to these values:
-  * 0 = 1
-  * 1 = 2
-  * 2 = 3
-* Read the memory value at position 0 and get 1.
-* Read the memory value at position 1 and get 2.
-* Read the memory value at position 2 and get 3.
-* Read the value of the highest known memory position and get 3.
-* Read the memory value at position 3 and get 0.
+### Return Coins
 
-#### **4. Increase the value of memory positions `👆`**
+> As a customer_  
+> I want to have my money returned
+> So that I can change my mind about buying stuff from the vending machine
 
-* Increase a cell with value 0 to 1.
-* Increase a cell with value 1 to 2.
-* Increase a cell with value 2 to 3.
-* Increase a cell with value 255 to 0.
+When the return coins button is pressed, the money the customer has placed in the machine is returned and the display shows INSERT COIN.
 
-#### **5. Decrease the value of a memory position `👇`**
+### Sold Out
 
-* Decrease a cell with value 3 to 2.
-* Decrease a cell with value 2 to 1.
-* Decrease a cell with value 1 to 0.
-* Decrease a cell with value 0 to 255.
+> As a customer
+> I want to be told when the item I have selected is not available
+> So that I can select another item
 
-#### 6. Write to memory positions
+When the item selected by the customer is out of stock, the machine displays SOLD OUT. If the display is checked again, it will display the amount of money remaining in the machine or INSERT COIN if there is no money in the machine.
 
-* Write 1 in position 0.
-* Write 2 in position 1.
-* Write 3 in position 2.
-* Write 4 in position 3.
+### Exact Change Only
 
-#### 7. Get the ASCII character `👊`
+> As a customer
+> I want to be told when exact change is required
+> So that I can determine if I can buy something with the money I have before inserting it
 
-* From a cell with value 65, get its ASCII value, "A".
-* From a cell with value 66, get its ASCII value, "B".
-* From a cell with value 67, get its ASCII value, "C".
-* From a cell with value 68, get its ASCII value, "D".
+When the machine is not able to make change with the money in the machine for any of the items that it sells, it will
+display EXACT CHANGE ONLY instead of INSERT COIN.
 
-#### **8. Execute the following emojis to get their respective messages**
+## Attribution
 
-* A
-  * [Long sequence of 👆 followed by 👊]
-* B
-  * [Long sequence of 👇 followed by 👊]
-* C
-  * [Long sequence of 👆 followed by 👊]
-* Hello
-  * [Long sequence of 👇 followed by 👊, then a series of 👉, 👆, and 👊]
-
-#### **9. Conditionals (`🤜` and `🤛`)**
-
-* When encountering a `🤜`, make the program's execution pointer jump to the corresponding `🤛` if the current memory cell value is 0.
-  * Test cases
-    * 🤜👆🤛
-    * 👆🤜👆🤛
- * A
-    * 👆🤛👆🤜👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👊
-  * B
-    * 🤛👆🤜👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👊
-* When encountering a `🤛`, make the program's execution pointer jump to the corresponding `🤜` if the current memory cell value is not 0.
-  * Test cases
-    * 👆🤛👆🤜
-    * 🤛👆🤜
-  * A
-    * [Sequence involving 👆, 🤛, 👆, 🤜, and 👊]
-  * B
-    * [Sequence involving 🤛, 👆, 🤜, 👇, and 👊]
+- Originally published by Guy Royse at https://github.com/guyroyse/vending-machine-kata
