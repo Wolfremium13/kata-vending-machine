@@ -1,7 +1,6 @@
 Vending Machine Kata
 ====================
 
-Source: [https://github.com/ardalis/kata-catalog](https://github.com/ardalis/kata-catalog)
 
 ## Instructions
 
