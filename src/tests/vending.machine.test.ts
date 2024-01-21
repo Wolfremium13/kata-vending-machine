@@ -6,6 +6,8 @@ import { Displayable } from '../core/interfaces/displayable';
 import { UnknownCoin } from '../core/coin/coins/unknown';
 import { Nickel } from '../core/coin/coins/nickel';
 import { CoinParams } from '../core/coin/coin.params';
+import { Dime } from '../core/coin/coins/dime';
+import { Quarter } from '../core/coin/coins/quarter';
 
 describe('Vending machine should', () => {
 	let coinReader: CoinReader;
@@ -44,15 +46,27 @@ describe('Vending machine should', () => {
 			expect(displayable.displayInsertCoin).toHaveBeenCalled();
 		});
 
-		it('display balance when coins inserted', () => {
-			const nickel = new Nickel();
-			coinReader.read = vi.fn(() => new CoinParams(nickel.sizeInMillimeters(), nickel.weightInGrams()));
+		it.each([
+			{
+				coin: new Nickel(),
+				expectedBalance: 0.05,
+			},
+			{
+				coin: new Dime(),
+				expectedBalance: 0.1,
+			},
+			{
+				coin: new Quarter(),
+				expectedBalance: 0.25,
+			},
+		])('display balance when valid coin is inserted', ({ coin, expectedBalance }) => {
+			coinReader.read = vi.fn(() => new CoinParams(coin.sizeInMillimeters(), coin.weightInGrams()));
 			const vendingMachine = new VendingMachine(coinReader, coinReturner, displayable);
 
 			vendingMachine.insertCoin();
 			vendingMachine.insertCoin();
 
-			expect(displayable.displayBalance).toHaveBeenCalledWith(nickel.valueInDollars() * 2);
+			expect(displayable.displayBalance).toHaveBeenCalledWith(expectedBalance * 2);
 		});
 	});
 });
