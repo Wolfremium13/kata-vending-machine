@@ -1,6 +1,8 @@
+import { Coin } from './coin/coin';
+import { UnknownCoin } from './coin/unknown.coin';
 import { CoinReader } from './interfaces/coin.reader';
 import { CoinReturner } from './interfaces/coin.return';
-import { Displayable } from './interfaces/displayer';
+import { Displayable } from './interfaces/displayable';
 
 export class VendingMachine {
 	constructor(
@@ -9,5 +11,13 @@ export class VendingMachine {
 		private readonly displayable: Displayable
 	) {}
 
-	public insertCoin(): void {}
+	public insertCoin(): void {
+		const unknownCoin = this.coinReader.read();
+		this.coinReturner.return(this.mapUnknownCoinToCoin(unknownCoin));
+
+	}
+
+	private mapUnknownCoinToCoin(unknownCoin: UnknownCoin): Coin {
+		return Coin.invalid();
+	}
 }

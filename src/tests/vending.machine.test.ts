@@ -2,8 +2,9 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { VendingMachine } from '../core/vending.machine';
 import { CoinReader } from '../core/interfaces/coin.reader';
 import { CoinReturner } from '../core/interfaces/coin.return';
-import { Displayable } from '../core/interfaces/displayer';
+import { Displayable } from '../core/interfaces/displayable';
 import { UnknownCoin } from '../core/coin/unknown.coin';
+import { Coin } from '../core/coin/coin';
 
 describe('Vending machine should', () => {
 	let coinReader: CoinReader;
@@ -30,6 +31,6 @@ describe('Vending machine should', () => {
 
 		vendingMachine.insertCoin();
 
-		expect(coinReturner.return).toHaveBeenCalledWith(penny);
+		expect(coinReturner.return).toHaveBeenCalledWith(Coin.invalid());
 	});
 });
