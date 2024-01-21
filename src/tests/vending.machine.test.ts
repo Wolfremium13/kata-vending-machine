@@ -33,4 +33,12 @@ describe('Vending machine should', () => {
 
 		expect(coinReturner.return).toHaveBeenCalledWith(Coin.invalid());
 	});
+
+  it('display insert coin when no coins inserted', () => {
+    const vendingMachine = new VendingMachine(coinReader, coinReturner, displayable);
+
+    vendingMachine.insertCoin();
+
+    expect(displayable.displayInsertCoin).toHaveBeenCalled();
+  });
 });

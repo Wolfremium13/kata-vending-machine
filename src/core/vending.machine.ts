@@ -9,7 +9,9 @@ export class VendingMachine {
 		private readonly coinReader: CoinReader,
 		private readonly coinReturner: CoinReturner,
 		private readonly displayable: Displayable
-	) {}
+	) {
+        this.displayable.displayInsertCoin();
+    }
 
 	public insertCoin(): void {
 		const unknownCoin = this.coinReader.read();
