@@ -9,6 +9,10 @@ export class CoinSize {
 		return Either.right(new CoinSize(size));
 	}
 
+	static nickel(): CoinSize {
+		return new CoinSize(21.21);
+	}
+
 	sizeInMillimeters(): number {
 		return this.size;
 	}

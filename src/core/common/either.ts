@@ -1,60 +1,48 @@
-export type Left<L> = { kind: 'left'; leftValue: L };
-export type Right<R> = { kind: 'right'; rightValue: R };
-export type EitherValue<L, R> = Left<L> | Right<R>;
-
 export class Either<L, R> {
-	private constructor(private readonly value: EitherValue<L, R>) {}
+    private leftValue: L | null;
+    private rightValue: R | null;
 
-	isLeft(): boolean {
-		return this.value.kind === 'left';
-	}
-	isRight(): boolean {
-		return this.value.kind === 'right';
-	}
+    private constructor(leftValue: L | null, rightValue: R | null) {
+        this.leftValue = leftValue;
+        this.rightValue = rightValue;
+    }
 
-	fold<T>(leftFn: (left: L) => T, rightFn: (right: R) => T): T {
-		switch (this.value.kind) {
-			case 'left':
-				return leftFn(this.value.leftValue);
-			case 'right':
-				return rightFn(this.value.rightValue);
-		}
-	}
+    public static left<L, R>(value: L): Either<L, R> {
+        return new Either(value, null);
+    }
 
-	map<T>(fn: (r: R) => T): Either<L, T> {
-		return this.flatMap((r) => Either.right(fn(r)));
-	}
+    public static right<L, R>(value: R): Either<L, R> {
+        return new Either(null, value);
+    }
 
-	flatMap<T>(fn: (right: R) => Either<L, T>): Either<L, T> {
-		return this.fold(
-			(leftValue) => Either.left(leftValue),
-			(rightValue) => fn(rightValue)
-		);
-	}
+    public isLeft(): boolean {
+        return this.leftValue !== null;
+    }
 
-	getOrThrow(errorMessage?: string): R {
-		const throwFn = () => {
-			throw Error(errorMessage ? errorMessage : 'An error has ocurred: ' + this.value);
-		};
+    public isRight(): boolean {
+        return this.rightValue !== null;
+    }
 
-		return this.fold(
-			() => throwFn(),
-			(rightValue) => rightValue
-		);
-	}
+    public getLeft(): L | null {
+        if (this.isLeft()) {
+            return this.leftValue;
+        }
+        throw new Error("No Left value");
+    }
 
-	getOrElse(defaultValue: R): R {
-		return this.fold(
-			() => defaultValue,
-			(someValue) => someValue
-		);
-	}
+    public getRight(): R | null {
+        if (this.isRight()) {
+            return this.rightValue;
+        }
+        throw new Error("No Right value");
+    }
 
-	static left<L, R>(value: L) {
-		return new Either<L, R>({ kind: 'left', leftValue: value });
-	}
-
-	static right<L, R>(value: R) {
-		return new Either<L, R>({ kind: 'right', rightValue: value });
-	}
+    public fold<T>(onLeft: (left: L) => T, onRight: (right: R) => T): T {
+        if (this.isLeft() && this.leftValue !== null) {
+            return onLeft(this.leftValue);
+        } else if (this.isRight() && this.rightValue !== null) {
+            return onRight(this.rightValue);
+        }
+        throw new Error("No value present");
+    }
 }

@@ -4,6 +4,8 @@ import { CoinReader } from '../core/interfaces/coin.reader';
 import { CoinReturner } from '../core/interfaces/coin.return';
 import { Displayable } from '../core/interfaces/displayable';
 import { UnknownCoin } from '../core/coin/unknown.coin';
+import { CoinSize } from '../core/coin/coin.size';
+import { CoinWeight } from '../core/coin/coin.weight';
 
 describe('Vending machine should', () => {
 	let coinReader: CoinReader;
@@ -23,32 +25,36 @@ describe('Vending machine should', () => {
 		};
 	});
 
-	it('ignore non valid coins', () => {
-		const penny = new UnknownCoin(19.05, 2.5);
-		coinReader.read = vi.fn(() => penny);
-		const vendingMachine = new VendingMachine(coinReader, coinReturner, displayable);
+	describe('when insert coins', () => {
+		it('give back invalid coins', () => {
+			const coinSize = CoinSize.from(1).getRight();
+			const coinWeight = CoinWeight.from(1).getRight();
+			const penny = new UnknownCoin(coinSize, coinWeight);
+			coinReader.read = vi.fn(() => penny);
+			const vendingMachine = new VendingMachine(coinReader, coinReturner, displayable);
 
-		vendingMachine.insertCoin();
+			vendingMachine.insertCoin();
 
-		expect(coinReturner.return).toHaveBeenCalledWith(penny);
+			expect(coinReturner.return).toHaveBeenCalledWith(penny);
+		});
+
+		it('display insert coin when no coins inserted', () => {
+			const vendingMachine = new VendingMachine(coinReader, coinReturner, displayable);
+
+			vendingMachine.insertCoin();
+
+			expect(displayable.displayInsertCoin).toHaveBeenCalled();
+		});
+
+		it('display balance when coins inserted', () => {
+			const nickel = new UnknownCoin(CoinSize.nickel(), CoinWeight.nickel());
+			coinReader.read = vi.fn(() => nickel);
+			const vendingMachine = new VendingMachine(coinReader, coinReturner, displayable);
+
+			vendingMachine.insertCoin();
+			vendingMachine.insertCoin();
+
+			expect(displayable.displayBalance).toHaveBeenCalledWith(0.1);
+		});
 	});
-
-  it('display insert coin when no coins inserted', () => {
-    const vendingMachine = new VendingMachine(coinReader, coinReturner, displayable);
-
-    vendingMachine.insertCoin();
-
-    expect(displayable.displayInsertCoin).toHaveBeenCalled();
-  });
-
-  it('display balance when coins inserted', () => {
-    const nickel = new UnknownCoin(21.21, 5);
-    coinReader.read = vi.fn(() => nickel);
-    const vendingMachine = new VendingMachine(coinReader, coinReturner, displayable);
-
-    vendingMachine.insertCoin();
-    vendingMachine.insertCoin();
-
-    expect(displayable.displayBalance).toHaveBeenCalledWith(0.10);
-  });
 });

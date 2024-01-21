@@ -11,4 +11,7 @@ export class CoinWeight {
 	weightInGrams() {
 		return this.weight;
 	}
+	static nickel() {
+		return new CoinWeight(5);
+	}
 }

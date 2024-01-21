@@ -1,3 +1,6 @@
+import { CoinSize } from "./coin.size";
+import { CoinWeight } from "./coin.weight";
+
 export class UnknownCoin {
-	constructor(readonly size: number, readonly weight: number) {}
+	constructor(readonly size: CoinSize, readonly weight: CoinWeight) {}
 }

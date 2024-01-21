@@ -18,14 +18,15 @@ export class VendingMachine {
 	public insertCoin(): void {
 		const unknownCoin = this.coinReader.read();
 		const maybeCoin = this.coinFactory.create(unknownCoin);
-		if (maybeCoin.isLeft()) {
-			this.coinReturner.return(unknownCoin);
-			return;
-		}
-		maybeCoin.map((coin) => {
-			this.coins.push(coin);
-			this.displayable.displayBalance(this.getBalance());
-		});
+		maybeCoin.fold(
+			() => {
+				this.coinReturner.return(unknownCoin);
+			},
+			(coin) => {
+				this.coins.push(coin);
+				this.displayable.displayBalance(this.getBalance());
+			}
+		);
 	}
 
 	private getBalance(): number {
