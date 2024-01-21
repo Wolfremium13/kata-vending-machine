@@ -52,7 +52,7 @@ describe('Vending machine should', () => {
 			vendingMachine.insertCoin();
 			vendingMachine.insertCoin();
 
-			expect(displayable.displayBalance).toHaveBeenCalledWith(0.1);
+			expect(displayable.displayBalance).toHaveBeenCalledWith(nickel.valueInDollars() * 2);
 		});
 	});
 });
