@@ -16,6 +16,9 @@ export class CoinFactory {
 		return Either.left(new Error('Invalid coin'));
 	}
 	private isNickel(size: CoinSize, weight: CoinWeight): boolean {
-		return size.sizeInMillimeters() === CoinSize.nickel().sizeInMillimeters() && weight.weightInGrams() === CoinWeight.nickel().weightInGrams();
+		return (
+			size.sizeInMillimeters() === CoinSize.nickel().sizeInMillimeters() &&
+			weight.weightInGrams() === CoinWeight.nickel().weightInGrams()
+		);
 	}
 }
