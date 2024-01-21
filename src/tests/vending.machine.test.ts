@@ -4,7 +4,6 @@ import { CoinReader } from '../core/interfaces/coin.reader';
 import { CoinReturner } from '../core/interfaces/coin.return';
 import { Displayable } from '../core/interfaces/displayable';
 import { UnknownCoin } from '../core/coin/unknown.coin';
-import { Coin } from '../core/coin/coin';
 
 describe('Vending machine should', () => {
 	let coinReader: CoinReader;
@@ -31,7 +30,7 @@ describe('Vending machine should', () => {
 
 		vendingMachine.insertCoin();
 
-		expect(coinReturner.return).toHaveBeenCalledWith(Coin.invalid());
+		expect(coinReturner.return).toHaveBeenCalledWith(penny);
 	});
 
   it('display insert coin when no coins inserted', () => {
@@ -40,5 +39,16 @@ describe('Vending machine should', () => {
     vendingMachine.insertCoin();
 
     expect(displayable.displayInsertCoin).toHaveBeenCalled();
+  });
+
+  it('display balance when coins inserted', () => {
+    const nickel = new UnknownCoin(21.21, 5);
+    coinReader.read = vi.fn(() => nickel);
+    const vendingMachine = new VendingMachine(coinReader, coinReturner, displayable);
+
+    vendingMachine.insertCoin();
+    vendingMachine.insertCoin();
+
+    expect(displayable.displayBalance).toHaveBeenCalledWith(0.10);
   });
 });

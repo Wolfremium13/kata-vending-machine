@@ -1,6 +1,6 @@
-import { Coin } from '../coin/coin';
+import { UnknownCoin } from '../coin/unknown.coin';
 import { Result } from '../common/result';
 
 export interface CoinReturner {
-	return(coin: Coin): Result<void, Error>;
+	return(coin: UnknownCoin): Result<void, Error>;
 }

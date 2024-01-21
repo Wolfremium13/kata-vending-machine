@@ -1,12 +1,9 @@
 export class Coin {
 	constructor(private readonly value: number) {}
 	static nickel() {
-		return new Coin(0.05);
+		const valueInDollars = 0.05;
+		return new Coin(valueInDollars);
 	}
-	static invalid() {
-		return new Coin(0);
-	}
-
 	valueInDollars(): number {
 		return this.value;
 	}
