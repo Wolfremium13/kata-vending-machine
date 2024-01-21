@@ -1,5 +1,5 @@
-import { Coin } from './coin/coin';
 import { CoinFactory } from './coin/coin.factory';
+import { Coin } from './interfaces/coin';
 import { CoinReader } from './interfaces/coin.reader';
 import { CoinReturner } from './interfaces/coin.return';
 import { Displayable } from './interfaces/displayable';
@@ -11,22 +11,24 @@ export class VendingMachine {
 		private readonly displayable: Displayable,
 		private readonly coinFactory: CoinFactory = new CoinFactory(),
 		private coins: Coin[] = []
-	) {
-		this.displayable.displayInsertCoin();
-	}
+	) {}
 
 	public insertCoin(): void {
-		const unknownCoin = this.coinReader.read();
-		const maybeCoin = this.coinFactory.create(unknownCoin);
-		maybeCoin.fold(
+		const coinParams = this.coinReader.read();
+		this.coinFactory.getInstanceFrom(coinParams).fold(
 			() => {
-				this.coinReturner.return(unknownCoin);
+				if (coinParams) {
+					this.coinReturner.return();
+				}
 			},
 			(coin) => {
 				this.coins.push(coin);
 				this.displayable.displayBalance(this.getBalance());
 			}
 		);
+		if (this.getBalance() === 0) {
+			this.displayable.displayInsertCoin();
+		}
 	}
 
 	private getBalance(): number {

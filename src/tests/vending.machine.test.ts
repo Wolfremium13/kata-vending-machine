@@ -3,9 +3,9 @@ import { VendingMachine } from '../core/vending.machine';
 import { CoinReader } from '../core/interfaces/coin.reader';
 import { CoinReturner } from '../core/interfaces/coin.return';
 import { Displayable } from '../core/interfaces/displayable';
-import { UnknownCoin } from '../core/coin/unknown.coin';
-import { CoinSize } from '../core/coin/coin.size';
-import { CoinWeight } from '../core/coin/coin.weight';
+import { UnknownCoin } from '../core/coin/coins/unknown';
+import { Nickel } from '../core/coin/coins/nickel';
+import { CoinParams } from '../core/coin/coin.params';
 
 describe('Vending machine should', () => {
 	let coinReader: CoinReader;
@@ -27,15 +27,13 @@ describe('Vending machine should', () => {
 
 	describe('when insert coins', () => {
 		it('give back invalid coins', () => {
-			const coinSize = CoinSize.from(1).getRight();
-			const coinWeight = CoinWeight.from(1).getRight();
-			const penny = new UnknownCoin(coinSize, coinWeight);
-			coinReader.read = vi.fn(() => penny);
+			const invalidCoin = new UnknownCoin();
+			coinReader.read = vi.fn(() => new CoinParams(invalidCoin.sizeInMillimeters(), invalidCoin.weightInGrams()));
 			const vendingMachine = new VendingMachine(coinReader, coinReturner, displayable);
 
 			vendingMachine.insertCoin();
 
-			expect(coinReturner.return).toHaveBeenCalledWith(penny);
+			expect(coinReturner.return).toHaveBeenCalled();
 		});
 
 		it('display insert coin when no coins inserted', () => {
@@ -47,8 +45,8 @@ describe('Vending machine should', () => {
 		});
 
 		it('display balance when coins inserted', () => {
-			const nickel = new UnknownCoin(CoinSize.nickel(), CoinWeight.nickel());
-			coinReader.read = vi.fn(() => nickel);
+			const nickel = new Nickel();
+			coinReader.read = vi.fn(() => new CoinParams(nickel.sizeInMillimeters(), nickel.weightInGrams()));
 			const vendingMachine = new VendingMachine(coinReader, coinReturner, displayable);
 
 			vendingMachine.insertCoin();

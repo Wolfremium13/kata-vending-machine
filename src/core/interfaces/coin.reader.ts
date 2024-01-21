@@ -1,5 +1,5 @@
-import { UnknownCoin } from "../coin/unknown.coin";
+import { CoinParams } from "../coin/coin.params";
 
 export interface CoinReader {
-    read(): UnknownCoin;
+	read(): CoinParams;
 }
